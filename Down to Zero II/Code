@@ -1,0 +1,85 @@
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
+using System.Text;
+using System;
+
+class Result
+{
+
+    /*
+     * Complete the 'downToZero' function below.
+     *
+     * The function is expected to return an INTEGER.
+     * The function accepts INTEGER n as parameter.
+     */
+
+    public static int downToZero(int n)
+    {
+        Queue<int> queue = new Queue<int>();
+        int[] dist = new int[n + 1];
+        for (int i = 0; i <= n; i++) dist[i] = -1;
+
+        dist[n] = 0;
+        queue.Enqueue(n);
+
+        while (queue.Count > 0)
+        {
+            int current = queue.Dequeue();
+
+            if (current == 0)
+                return dist[current];
+
+            if (dist[current - 1] == -1)
+            {
+                dist[current - 1] = dist[current] + 1;
+                queue.Enqueue(current - 1);
+            }
+
+            for (int i = 2; i * i <= current; i++)
+            {
+                if (current % i == 0)
+                {
+                    int next = Math.Max(i, current / i);
+                    if (dist[next] == -1)
+                    {
+                        dist[next] = dist[current] + 1;
+                        queue.Enqueue(next);
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+}
+
+class Solution
+{
+    public static void Main(string[] args)
+    {
+        TextWriter textWriter = new StreamWriter(@System.Environment.GetEnvironmentVariable("OUTPUT_PATH"), true);
+
+        int q = Convert.ToInt32(Console.ReadLine().Trim());
+
+        for (int qItr = 0; qItr < q; qItr++)
+        {
+            int n = Convert.ToInt32(Console.ReadLine().Trim());
+
+            int result = Result.downToZero(n);
+
+            textWriter.WriteLine(result);
+        }
+
+        textWriter.Flush();
+        textWriter.Close();
+    }
+}
